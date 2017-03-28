@@ -18,9 +18,9 @@ import fr.afcepf.atod.wine.entity.ProductVarietal;
 import fr.afcepf.atod.wine.entity.ProductWine;
 import javassist.bytecode.analysis.Type;
 
-public class daoTester {
+public class DaoTesterMain {
 
-    private static Logger log = Logger.getLogger(daoTester.class);
+    private static Logger log = Logger.getLogger(DaoTesterMain.class);
 
     public static void main(String[] args) {
         try {

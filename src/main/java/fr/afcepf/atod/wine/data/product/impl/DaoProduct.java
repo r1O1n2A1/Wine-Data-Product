@@ -1,5 +1,6 @@
 package fr.afcepf.atod.wine.data.product.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,14 +11,12 @@ import fr.afcepf.atod.vin.data.exception.WineErrorCode;
 import fr.afcepf.atod.vin.data.exception.WineException;
 import fr.afcepf.atod.wine.data.impl.DaoGeneric;
 import fr.afcepf.atod.wine.data.product.api.IDaoProduct;
+import fr.afcepf.atod.wine.data.util.DaoUtil;
 import fr.afcepf.atod.wine.entity.Product;
 import fr.afcepf.atod.wine.entity.ProductType;
 import fr.afcepf.atod.wine.entity.ProductVarietal;
 import fr.afcepf.atod.wine.entity.ProductVintage;
 import fr.afcepf.atod.wine.entity.ProductWine;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -62,33 +61,35 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
             + "left join fetch pv.productsWine as pw WHERE pv.description = :paramVarietal "
             + "AND pw.productType.type = :paramType";
     
-    private static final String REQTYPEAPPELLATION = "Select p FROM ProductWine p "
+    private static final String PRODUCT_WINE = "Select p FROM ProductWine p ";
+    private static final String REQTYPEAPPELLATION = PRODUCT_WINE
     		+ "WHERE p.productType.type = :paramType AND p.appellation = :appellation";
 
     private static final String REQTYPEVINTAGE = "SELECT distinct(pv) FROM ProductVintage pv "
             + "left join fetch pv.productsWine as pw WHERE pv.year = :paramVintage "
             + "AND pw.productType.type = :paramType";
     
-    private static final String REQTYPEMAXMONEY = "SELECT p FROM ProductWine p "
+    private static final String REQTYPEMAXMONEY = PRODUCT_WINE
             + "WHERE p.productType.type = :paramType AND p.price > :paramMin";
     
-    private static final String REQTYPEMONEY = "SELECT p FROM ProductWine p "
+    private static final String REQTYPEMONEY = PRODUCT_WINE
             + "WHERE p.productType.type = :paramType AND p.price between :start "
             + " and :end";
     
-    private static final String REQTYPE = "SELECT p FROM ProductWine p "
+    private static final String REQTYPE = PRODUCT_WINE
             + "WHERE p.productType.type = :paramType";
     
 
     /*********************************************
      * Requetes HQL
      *********************************************/
-    @Override
-    public Product findByName(String name) throws WineException {
-        Product p = null;
-        if (!name.equals("")) {
-            p = (Product) (getSf().getCurrentSession().createQuery(REQFINDBYNAME).setParameter("name", "%" + name + "%")
-                    .uniqueResult());
+    @SuppressWarnings("unchecked")
+	@Override
+    public List<Product> findByName(String name) throws WineException {
+        List<Product> p = null;
+        if (!name.equals(DaoUtil.EMPTY_STR)) {
+            p =  (getSf().getCurrentSession().createQuery(REQFINDBYNAME).setParameter("name", "%" + name + "%")
+                    .list());
             if (p == null) {
                 throw new WineException(WineErrorCode.RECHERCHE_NON_PRESENTE_EN_BASE,
                         "the product named " + name + " has not been" + " found in the database.");
@@ -141,7 +142,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
     @Override
     public List<Product> findByAppelation(String appelation) throws WineException {
         List<Product> list = null;
-        if (!appelation.equals("")) {
+        if (!appelation.equals(DaoUtil.EMPTY_STR)) {
             list = getSf().getCurrentSession().createQuery(REQFINDBYAPPELATION)
                     .setParameter("paramApp", "%" + appelation + "%").list();
             if (list == null) {
@@ -169,7 +170,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
     @Override
     public List<ProductVarietal> findByVarietal(String variatal) throws WineException {
         List<ProductVarietal> list = null;
-        if (!variatal.equals("")) {
+        if (!variatal.equals(DaoUtil.EMPTY_STR)) {
             list = getSf().getCurrentSession().createQuery(REQFINDBYVARIETAL)
                     .setParameter("paramVarietal", "%" + variatal + "%").list();
             if (list == null) {
@@ -191,7 +192,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
     @Override
     public List<ProductType> findByType(String wineType) throws WineException {
         List<ProductType> list = null;
-        if (!wineType.equals("")) {
+        if (!wineType.equals(DaoUtil.EMPTY_STR)) {
             list = getSf().getCurrentSession().createQuery(REQFINDBYTYPE)
                     .setParameter("paramType", "%" + wineType + "%").list();
             if (list == null) {
@@ -212,7 +213,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
     @Override
     public List<Product> findByNotCompleteName(String name) throws WineException {
         List<Product> list = null;
-        if (!name.equals("")) {
+        if (!name.equals(DaoUtil.EMPTY_STR)) {
             list = getSf().getCurrentSession().createQuery(REQFINDBYNAME)
                     .setParameter("name", "%" + name + "%").list();
             if (list == null) {
@@ -245,8 +246,8 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
             throws WineException {
         List<ProductWine> listWine = null;
         List<ProductVarietal> list = null;
-        if (!wineType.getType().equalsIgnoreCase("")
-                && !varietal.getDescription().equalsIgnoreCase("")) {
+        if (!wineType.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)
+                && !varietal.getDescription().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             list = getSf().getCurrentSession().createQuery(REQTYPEVARITAL)
                     .setParameter("paramType", wineType.getType())
                     .setParameter("paramVarietal", varietal.getDescription())
@@ -277,7 +278,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
     		Integer firstRow, Integer rowsPerPage) throws WineException {
         List<ProductWine> listWine = null;
         List<ProductVintage> list = null;
-        if (!type.getType().equalsIgnoreCase("")
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)
                 && vintage.getYear() != null) {
             list = getSf().getCurrentSession().createQuery(REQTYPEVINTAGE)
                     .setParameter("paramType", type.getType())
@@ -309,7 +310,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	@Override
     public List<ProductWine> findByMoneyAndType(ProductType type, Integer integ, Integer firstRow, Integer rowsPerPage) throws WineException {
         List<ProductWine> listWine = null;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             listWine = getSf().getCurrentSession()
                     .createQuery(REQTYPEMAXMONEY)
                     .setParameter("paramType", type.getType())
@@ -330,7 +331,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	public List<ProductWine> findByMoneyAndType(ProductType type, Integer integ, Integer maxInt, Integer firstRow,
 			Integer rowsPerPage) throws WineException {
 		List<ProductWine> listWine = null;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             listWine = getSf().getCurrentSession()
                     .createQuery(REQTYPEMONEY)
                     .setParameter("paramType", type.getType())
@@ -351,8 +352,8 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	public Integer countByVarietalAndType(ProductType wineType, ProductVarietal varietal) {
 		 	Integer count =0;
 	        List<ProductVarietal> list = null;
-	        if (!wineType.getType().equalsIgnoreCase("")
-	                && !varietal.getDescription().equalsIgnoreCase("")) {
+	        if (!wineType.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)
+	                && !varietal.getDescription().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
 	            list = getSf().getCurrentSession().createQuery(REQTYPEVARITAL)
 	                    .setParameter("paramType", wineType.getType())
 	                    .setParameter("paramVarietal", varietal.getDescription())
@@ -369,7 +370,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	public Integer countByVintageAndType(ProductType type, ProductVintage vintage) {
 		Integer count =0;
         List<ProductVintage> list = null;
-        if (!type.getType().equalsIgnoreCase("")
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)
                 && vintage.getYear() != null) {
             list = getSf().getCurrentSession().createQuery(REQTYPEVINTAGE)
                     .setParameter("paramType", type.getType())
@@ -385,7 +386,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	@Override
 	public Integer countByMoneyAndType(ProductType type, Integer integ) {
 		Integer count = 0;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             count = getSf().getCurrentSession()
                     .createQuery(REQTYPEMAXMONEY)
                     .setParameter("paramType", type.getType())
@@ -398,7 +399,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	@Override
 	public Integer countByMoneyAndType(ProductType type, Integer integ, Integer maxInt) {
 		Integer count = 0;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             count = getSf().getCurrentSession()
                     .createQuery(REQTYPEMONEY)
                     .setParameter("paramType", type.getType())
@@ -412,7 +413,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	@Override
 	public Integer countByAppellationAndType(ProductType type, String appellation) {
 		Integer count = 0;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             count = getSf().getCurrentSession()
                     .createQuery(REQTYPEAPPELLATION)
                     .setParameter("paramType", type.getType())
@@ -422,11 +423,12 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
         return count; 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProductWine> findByAppelationAndType(ProductType type, String appellation, Integer firstRow,
 			Integer rowsPerPage) throws WineException {
 		List<ProductWine> listWine = null;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             listWine = getSf().getCurrentSession()
                     .createQuery(REQTYPEAPPELLATION)
                     .setParameter("paramType", type.getType())
@@ -441,10 +443,11 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
         return listWine; 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProductWine> findByType(ProductType type, Integer firstRow, Integer rowsPerPage) throws WineException {
 		List<ProductWine> listWine = null;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             listWine = getSf().getCurrentSession()
                     .createQuery(REQTYPE)
                     .setParameter("paramType", type.getType())
@@ -461,7 +464,7 @@ public class DaoProduct extends DaoGeneric<Product, Integer>
 	@Override
 	public Integer countByType(ProductType type) {
 		Integer count = 0;
-        if (!type.getType().equalsIgnoreCase("")) {
+        if (!type.getType().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
             count = getSf().getCurrentSession()
                     .createQuery(REQTYPE)
                     .setParameter("paramType", type.getType())

@@ -11,6 +11,11 @@ import fr.afcepf.atod.wine.entity.ProductVarietal;
 import fr.afcepf.atod.wine.entity.ProductVintage;
 import fr.afcepf.atod.wine.entity.ProductWine;
 
+/**
+ * Services for the database acess of a {@link Product}
+ * @author ronan
+ *
+ */
 public interface IDaoProduct extends IDaoGeneric<Product, Integer> {
 
     /**
@@ -22,10 +27,10 @@ public interface IDaoProduct extends IDaoGeneric<Product, Integer> {
     /**
      *
      * @param name
-     * @return
+     * @return list {@link Product}
      * @throws WineException
      */
-    Product findByName(String name) throws WineException;
+    List<Product> findByName(String name) throws WineException;
     /**
      *
      * @param min
@@ -89,7 +94,8 @@ public interface IDaoProduct extends IDaoGeneric<Product, Integer> {
      * @return
      * @throws WineException
      */
-    List<ProductWine> findByVarietalAndType(ProductType wineType, ProductVarietal varietal,Integer firstRow,Integer rowsPerPage) 
+    List<ProductWine> findByVarietalAndType(ProductType wineType, 
+    		ProductVarietal varietal, Integer firstRow, Integer rowsPerPage) 
             throws WineException;
     /**
      * 
@@ -98,7 +104,8 @@ public interface IDaoProduct extends IDaoGeneric<Product, Integer> {
      * @return
      * @throws WineException 
      */
-    List<ProductWine> findByVintageAndType(ProductType type, ProductVintage vintage,Integer firstRow,Integer rowsPerPage)
+    List<ProductWine> findByVintageAndType(ProductType type,
+    		ProductVintage vintage,Integer firstRow,Integer rowsPerPage)
             throws WineException;
     /**
      * 
@@ -107,9 +114,11 @@ public interface IDaoProduct extends IDaoGeneric<Product, Integer> {
      * @return
      * @throws WineException 
      */
-    List<ProductWine> findByMoneyAndType(ProductType type, Integer integ,Integer firstRow,Integer rowsPerPage) throws WineException;
+    List<ProductWine> findByMoneyAndType(ProductType type, Integer integ,
+    		Integer firstRow,Integer rowsPerPage) throws WineException;
     
-    List<ProductWine> findByAppelationAndType(ProductType type, String appellation,Integer firstRow,Integer rowsPerPage) throws WineException;
+    List<ProductWine> findByAppelationAndType(ProductType type, String appellation,
+    		Integer firstRow,Integer rowsPerPage) throws WineException;
     
     List<ProductWine> findByType(ProductType type, Integer firstRow,Integer rowsPerPage) throws WineException;
     /**
@@ -120,7 +129,8 @@ public interface IDaoProduct extends IDaoGeneric<Product, Integer> {
      * @return
      * @throws WineException 
      */
-    List<ProductWine> findByMoneyAndType(ProductType type, Integer integ, Integer maxInt,Integer firstRow,Integer rowsPerPage) throws WineException;
+    List<ProductWine> findByMoneyAndType(ProductType type, Integer integ, 
+    		Integer maxInt,Integer firstRow,Integer rowsPerPage) throws WineException;
     
     Integer countByVarietalAndType(ProductType type, ProductVarietal Varietal);
     Integer countByVintageAndType(ProductType type, ProductVintage vintage);
