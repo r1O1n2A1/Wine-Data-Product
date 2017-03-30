@@ -41,7 +41,7 @@ public class TestDaoProduct {
 					"pre",
 					(double)500, 
 					"un produit", 
-					new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-09-20 13:07:50"), 
+					new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-03-27 19:10:45"), 
 					null, 
 					null, 
 					null);
