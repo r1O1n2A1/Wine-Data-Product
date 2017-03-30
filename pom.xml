@@ -5,6 +5,7 @@
 		<groupId>fr.afcepf.atod</groupId>
 		<artifactId>Wine-Parent</artifactId>
 		<version>1.0.0</version>
+		<relativePath>../Wine-Parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>Wine-Data-Product</artifactId>
 	<dependencies>
