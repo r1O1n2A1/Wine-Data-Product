@@ -49,6 +49,7 @@ public class TestDaoProduct {
 			logger.info(e.getMessage());
 		}
 	}
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testNominalProductByName() throws WineException {
 		List<Product> retour = daoProduct.findByName(nominal);
@@ -56,8 +57,8 @@ public class TestDaoProduct {
 		if (retour.get(0) != null && 
 				!retour.get(0).getDescription().equalsIgnoreCase(DaoUtil.EMPTY_STR)) {
 			Assert.assertEquals(retour.get(0).getName(), expectedProduct.getName());
-			Assert.assertEquals(retour.get(0).getCreatedAt().getTime(), 
-					expectedProduct.getCreatedAt().getTime());
+			Assert.assertEquals(retour.get(0).getCreatedAt().getYear(), 
+					expectedProduct.getCreatedAt().getYear());
 		}
 	}
 	@Test
